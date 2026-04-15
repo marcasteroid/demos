@@ -52,11 +52,7 @@ benchmark:
    :math:`1 - \langle\hat{Z}_0\rangle^2`, computed analytically from the
    same circuit evaluations used for (2).
 
-.. figure:: ../_static/quantum_active_learning/banner.png
-    :align: center
-    :width: 90%
 
-|
 
 Imports and Setup
 -----------------
@@ -321,14 +317,14 @@ print(f"  Absolute difference      = {abs(var_analytic - var_qml):.2e}")
 # previous round to reduce the number of steps needed per round.
 
 LEARNING_RATE = 0.05
-N_STEPS = 15  # Adam steps per active learning round
+N_STEPS = 10  # Adam steps per active learning round
 
 ##############################################################################
 # .. note::
 #
-#    Increase ``N_STEPS`` (e.g. to 40) and ``N_QUERIES`` (e.g. to 15) for
-#    publication-quality learning curves. The defaults keep runtime under
-#    ~5 minutes on CPU.
+#    Increase ``N_STEPS`` (e.g. to 40), ``N_QUERIES`` (e.g. to 15), and
+#    ``N_TRIALS`` (e.g. to 50) for publication-quality learning curves.
+#    The defaults are tuned to keep CI runtime under ~5 minutes on CPU.
 
 
 def train(weights, X_lab, y_lab, n_steps=N_STEPS, lr=LEARNING_RATE):
@@ -413,7 +409,7 @@ def query_quantum_variance(expvals):
 
 N_INIT = 8
 N_QUERIES = 6
-N_TRIALS = 50
+N_TRIALS = 10
 
 STRATEGIES = {
     "Random": query_random,
@@ -603,7 +599,7 @@ def run_trial_recorded(strategy_fn, seed):
 final_seed = (N_TRIALS - 1) * 31 + 7
 final_weights, queried_pts = run_trial_recorded(STRATEGIES["Quantum variance"], seed=final_seed)
 
-h = 0.10
+h = 0.20
 pad = 0.12
 x0_lo, x0_hi = X_pool[:, 0].min() - pad, X_pool[:, 0].max() + pad
 x1_lo, x1_hi = X_pool[:, 1].min() - pad, X_pool[:, 1].max() + pad
@@ -827,7 +823,7 @@ for ax, mat, title, cmap, vmin, vmax, fmt in configs:
             )
 
 plt.suptitle(
-    f"Strategy × round comparison  (aggregated over {N_TRIALS} trials)",
+    f"Strategy × round comparison  ({N_TRIALS} trials)",
     fontsize=12,
 )
 plt.tight_layout()
@@ -928,6 +924,6 @@ for name in STRATEGIES:
 # About the Author
 # ----------------
 #
-# Marco Margarucci is an MSc Data Science student from Università degli Studi di
+# Marco Margarucci is a MSc Data Science student from Università degli Studi di
 # Napoli Federico II, with research interests in quantum machine learning,
 # kernel methods, and hybrid classical-quantum architectures.
